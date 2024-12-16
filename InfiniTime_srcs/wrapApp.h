@@ -5,6 +5,9 @@
 #include "displayapp/Controllers.h"
 #include "Symbols.h"
 
+#include "compat.h"
+
+typedef bool (*touchCallback)(globalTouchEvent e); // needed for delegating event handlers.
 namespace Pinetime {
   namespace Applications {
     namespace Screens {
@@ -12,6 +15,9 @@ namespace Pinetime {
       public:
         wrapApp(AppControllers& controllers);
         ~wrapApp() override;
+        bool OnTouchEvent(Pinetime::Applications::TouchEvents event) override;
+	  private:
+		touchCallback tcb;
       };
     }
     
