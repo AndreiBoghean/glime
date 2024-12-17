@@ -17,7 +17,8 @@ namespace Pinetime {
         ~wrapApp() override;
         bool OnTouchEvent(Pinetime::Applications::TouchEvents event) override;
 	  private:
-		touchCallback tcb;
+		touchCallback tcb = &default_OnTouchEvent;
+		static bool default_OnTouchEvent(globalTouchEvent event);
       };
     }
     

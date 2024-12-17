@@ -1,5 +1,5 @@
 #include "displayapp/screens/wrapApp.h"
-#include "displayapp/apps/externApp.h"
+#include "displayapp/screens/externApp.h"
 
 #include "compat.h"
 
@@ -21,17 +21,29 @@ wrapApp::wrapApp(AppControllers& controllers) {
   // lv_obj_align(title, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
 }
 
+bool wrapApp::default_OnTouchEvent(globalTouchEvent event)
+{
+  if (event != SwipeRight) { return true; }
+
+  lv_obj_t* title = lv_label_create(lv_scr_act(), nullptr);
+  lv_label_set_text_static(title, "My test application");
+  lv_label_set_align(title, LV_LABEL_ALIGN_CENTER);
+  lv_obj_align(title, lv_scr_act(), LV_ALIGN_IN_TOP_LEFT, 0, 0);
+
+  return true;
+}
+
 bool wrapApp::OnTouchEvent(Pinetime::Applications::TouchEvents event)
 {
   switch (event) {
     case TouchEvents::Tap:
-	    tcb(Tap);
+	    return tcb(Tap);
 	  break;
     case TouchEvents::SwipeLeft:
-	    tcb(SwipeLeft);
+	    return tcb(SwipeLeft);
 	  break;
     case TouchEvents::SwipeRight:
-	    tcb(SwipeRight);
+	    return tcb(SwipeRight);
 	  break;
 	default:
 	  return false;

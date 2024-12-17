@@ -30,40 +30,40 @@ brightness_level brightnessLevel = lo;
 bool OnTouchEvent(globalTouchEvent event); // forward declare
 
 void SetColors() {
-  int16_t bgColor = isOn ? 0xFF : 0x00 ; // set bgColour according to on or not
-  int16_t fgColor = isOn ? 0xB0 : 0xFF ; // set fgColour according to on or not
+  uint32_t bgColor = isOn ? 0xFFFFFF : 0x000000 ; // set bgColour according to on or not
+  uint32_t fgColor = isOn ? 0xB0B0B0 : 0xFFFFFF ; // set fgColour according to on or not
 
   set_colours(fgColor, bgColor);
 }
 
 void SetIndicators() { // function that updates the indicator visibility according to brightness (not-bright: no indicators, medium-bright: 1 indicator, full-bright: all indicators)
 
+  place_label("i", 120, 120+20); // display is 240x240 hence we position at 240/2=120 to centre.
+  // ^ "i" is my text representation of a flashlight. TODO: support image icons
+
   // left indicator
-  place_label("O", 120-8, 120-5);
+  place_label("O", 120-8*2, 120-5*2);
 
   // middle indicator
   if (brightnessLevel == hi || brightnessLevel == med)
-  { place_label("O", 120, 120-5); }
-  else { place_label("o", 120, 120-5); }
+  { place_label("O", 120, 120-5*2); }
+  else { place_label("o", 120, 120-5*2); }
 
   // right indicator
   if (brightnessLevel == hi)
-  { place_label("O", 120+8, 120-5); }
-  else { place_label("o", 120+8, 120-5); }
+  { place_label("O", 120+8*2, 120-5*2); }
+  else { place_label("o", 120+8*2, 120-5*2); }
 }
 
 int extern_main()
 {
   set_brightness(lo);
 
-  place_label("i", 120, 120); // display is 240x240 hence we position at 240/2=120 to centre.
-  // ^ "i" is my text representation of a flashlight.
-
-  SetIndicators();
   SetColors();
+  SetIndicators();
 
   // systemTask.PushMessage(Pinetime::System::Messages::DisableSleeping);
-  disable_sleep();
+  // disable_sleep();
   register_global_eventListener(OnTouchEvent);
   return 0;
 }
@@ -88,6 +88,8 @@ void Toggle() {
 
 bool OnTouchEvent(globalTouchEvent event)
 {
+  clear_screen(); // prepare for drawing the next screen state.
+
   auto SetState = []() {
     if (isOn) {
       set_brightness(brightnessLevel); // set brightness using brightness controller
@@ -97,6 +99,7 @@ bool OnTouchEvent(globalTouchEvent event)
 
   if (event == Tap) {
 	  Toggle();
+	  SetState();
 	  return true;
   }
   else if (event == SwipeLeft) {

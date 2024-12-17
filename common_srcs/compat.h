@@ -24,4 +24,6 @@ void register_global_eventListener(touchCallback e);
 // i.e. we use the return to decide whether to call lvgl.CancelTap();
 
 void disable_sleep();
+
+void clear_screen();
 #endif

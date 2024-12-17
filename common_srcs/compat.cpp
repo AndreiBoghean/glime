@@ -1,8 +1,11 @@
 #include "compat.h"
-#include "src/displayapp/screens/Screen.h"
+// #include "src/displayapp/screens/Screen.h"
+#include "displayapp/screens/Screen.h"
 
-#include "src/components/brightness/BrightnessController.h"
-#include "src/displayapp/Controllers.h"
+// #include "src/components/brightness/BrightnessController.h"
+#include "components/brightness/BrightnessController.h"
+// #include "src/displayapp/Controllers.h"
+#include "displayapp/Controllers.h"
 
 #include "displayapp/screens/Screen.h"
 #include "components/brightness/BrightnessController.h"
@@ -17,7 +20,7 @@ typedef bool (*touchCallback)(globalTouchEvent e);
 Pinetime::Applications::AppControllers* controllers;
 typedef struct {
 	Pinetime::Applications::AppControllers* controllers;
-	touchCallback tcb;
+	touchCallback* tcb;
 } setups_t;
 
 touchCallback* tcb; // a pointer to a pointer to a function.
@@ -28,7 +31,7 @@ void init(void* _s)
 {
 	setups_t* s = (setups_t*) _s;
 	controllers = s->controllers;
-	tcb = &s->tcb;
+	tcb = (s->tcb);
 	return;
 }
 
@@ -64,8 +67,8 @@ void place_label(std::string text, int x, int y)
 {
   auto label = lv_label_create(lv_scr_act(), nullptr); // create a label on the active screen
   lv_label_set_text(label, text.c_str());
-  lv_obj_align(label, nullptr, LV_ALIGN_CENTER, x, y); // position the label
-  lv_obj_set_style_local_bg_color(label, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, fg_colour);
+  lv_obj_align(label, nullptr, LV_ALIGN_IN_TOP_LEFT, x, y); // position the label
+  lv_obj_set_style_local_text_color(label, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, fg_colour);
 }
 
 void set_brightness(brightness_level bl)
@@ -84,10 +87,15 @@ void set_brightness(brightness_level bl)
 }
 void register_global_eventListener(touchCallback e)
 {
-  tcb = &e;
+  *tcb = e;
 }
 
 void disable_sleep()
 {
   controllers->systemTask->PushMessage(Pinetime::System::Messages::DisableSleeping);
+}
+
+void clear_screen()
+{
+  lv_obj_clean(lv_scr_act());
 }
