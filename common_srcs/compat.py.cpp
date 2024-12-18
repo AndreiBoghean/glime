@@ -29,3 +29,42 @@ void show_int(int i)
 	mp_call_function_n_kw(draw_string_callback, 5, 0, args);
 	m_del(mp_obt_t, args, 5);
 }
+
+// places a label centrered at x, y.
+void place_label(const char* text, int x, int y)
+{
+
+  if (text) return;
+  if (x) return;
+  if (y) return;
+}
+
+void set_colours(uint32_t fg, uint32_t bg)
+{
+  if (fg) return;
+  if (bg) return;
+}
+// set the foreground and background colours for drawing.
+
+void set_brightness(enum brightness_level bl)
+{
+  if (bl) return;
+}
+
+void register_global_eventListener(touchCallback e)
+{
+  if (e) return;
+}
+// ^ callback returns a boolean according to whether it actioned on the event or not
+// if it DID action, then we finalise that "event" and move on to detecting the next one.
+// i.e. we use the return to decide whether to call lvgl.CancelTap();
+
+void disable_sleep()
+{
+
+}
+
+void clear_screen()
+{
+
+}

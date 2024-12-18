@@ -7,7 +7,7 @@
 
 #include "compat.h"
 
-typedef bool (*touchCallback)(globalTouchEvent e); // needed for delegating event handlers.
+typedef int (*touchCallback)(globalTouchEvent e); // needed for delegating event handlers.
 namespace Pinetime {
   namespace Applications {
     namespace Screens {
@@ -18,7 +18,7 @@ namespace Pinetime {
         bool OnTouchEvent(Pinetime::Applications::TouchEvents event) override;
 	  private:
 		touchCallback tcb = &default_OnTouchEvent;
-		static bool default_OnTouchEvent(globalTouchEvent event);
+		static int default_OnTouchEvent(globalTouchEvent event);
       };
     }
     

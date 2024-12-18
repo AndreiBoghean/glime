@@ -1,23 +1,21 @@
 #pragma once
 
-#include <cstdint>
-#include <string>
+#include <stdint.h>
 
 void init(void* setups);
 void show_int(int i);
 
-#if true
-void place_label(std::string text, int x, int y);
 // places a label centrered at x, y.
+void place_label(const char* string, int x, int y);
 
-void set_colours(uint32_t, uint32_t);
+void set_colours(uint32_t fg, uint32_t bg);
 // set the foreground and background colours for drawing.
 
 enum brightness_level {lo, med, hi};
-void set_brightness(brightness_level);
+void set_brightness(enum brightness_level bl);
 
 enum globalTouchEvent {Tap, SwipeLeft, SwipeRight};
-typedef bool (*touchCallback)(globalTouchEvent e);
+typedef int (*touchCallback)(enum globalTouchEvent e);
 void register_global_eventListener(touchCallback e);
 // ^ callback returns a boolean according to whether it actioned on the event or not
 // if it DID action, then we finalise that "event" and move on to detecting the next one.
@@ -26,4 +24,3 @@ void register_global_eventListener(touchCallback e);
 void disable_sleep();
 
 void clear_screen();
-#endif

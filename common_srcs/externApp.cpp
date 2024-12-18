@@ -1,13 +1,13 @@
 #include "compat.h"
 
-/*
+///*
 int extern_main()
 {
 	show_int(6);
 
 	return 0;
 }
-*/
+//*/
 
 /*
  * labels, arbitrarily positioned and rotated, with arbitrary SVG displaying. (rip lol)
@@ -25,9 +25,10 @@ systemtask/SystemTask.cpp:
  * touch event listener, left swipe event, right swipe event
 */
 
-bool isOn = false;
-brightness_level brightnessLevel = lo;
-bool OnTouchEvent(globalTouchEvent event); // forward declare
+#if false
+int isOn = 0;
+enum brightness_level brightnessLevel = lo;
+int OnTouchEvent(enum globalTouchEvent event); // forward declare
 
 void SetColors() {
   uint32_t bgColor = isOn ? 0xFFFFFF : 0x000000 ; // set bgColour according to on or not
@@ -77,7 +78,7 @@ FlashLight::~FlashLight() {
 */
 
 void Toggle() {
-  isOn = !isOn;
+  isOn = 1-isOn;
   SetColors();
   if (isOn) {
     set_brightness(brightnessLevel); // set brightness using brightness controller
@@ -86,38 +87,45 @@ void Toggle() {
   }
 }
 
-bool OnTouchEvent(globalTouchEvent event)
+int OnTouchEvent(enum globalTouchEvent event)
 {
   clear_screen(); // prepare for drawing the next screen state.
 
-  auto SetState = []() {
-    if (isOn) {
-      set_brightness(brightnessLevel); // set brightness using brightness controller
-    }
-    SetIndicators(); // update indicators
-  };
-
   if (event == Tap) {
 	  Toggle();
-	  SetState();
-	  return true;
+	  if (isOn) {
+	    set_brightness(brightnessLevel); // set brightness using brightness controller
+	  }
+	  SetIndicators(); // update indicators
+	  return 1;
   }
   else if (event == SwipeLeft) {
 	if (brightnessLevel == hi) 
 	{ brightnessLevel = med; }
 	else if ( brightnessLevel == med )
 	{ brightnessLevel = lo; }
-    SetState();
-    return true;
+
+	if (isOn) {
+	  set_brightness(brightnessLevel); // set brightness using brightness controller
+	}
+	SetIndicators(); // update indicators
+					 //
+    return 1;
   }
   else if (event == SwipeRight) {
 	if (brightnessLevel == lo) 
 	{ brightnessLevel = med; }
 	else if ( brightnessLevel == med )
 	{ brightnessLevel = hi; }
-    SetState();
-    return true;
+
+	if (isOn) {
+	  set_brightness(brightnessLevel); // set brightness using brightness controller
+	}
+	SetIndicators(); // update indicators
+					 //
+    return 1;
   }
 
-  return false;
+  return 0;
 }
+#endif

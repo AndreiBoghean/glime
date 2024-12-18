@@ -16,7 +16,7 @@
 // note: callback returns a boolean according to whether it actioned on the event or not
 // if it DID action, then we finalise that "event" and move on to detecting the next one.
 // i.e. we use the return to decide whether to call lvgl.CancelTap();
-typedef bool (*touchCallback)(globalTouchEvent e);
+typedef int (*touchCallback)(globalTouchEvent e);
 Pinetime::Applications::AppControllers* controllers;
 typedef struct {
 	Pinetime::Applications::AppControllers* controllers;
@@ -63,10 +63,10 @@ void set_colours(uint32_t fg, uint32_t bg)
 }
 
 // places a label centrered at x, y.
-void place_label(std::string text, int x, int y)
+void place_label(const char* text, int x, int y)
 {
   auto label = lv_label_create(lv_scr_act(), nullptr); // create a label on the active screen
-  lv_label_set_text(label, text.c_str());
+  lv_label_set_text(label, text);
   lv_obj_align(label, nullptr, LV_ALIGN_IN_TOP_LEFT, x, y); // position the label
   lv_obj_set_style_local_text_color(label, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, fg_colour);
 }

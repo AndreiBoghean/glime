@@ -21,7 +21,7 @@ wrapApp::wrapApp(AppControllers& controllers) {
   // lv_obj_align(title, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
 }
 
-bool wrapApp::default_OnTouchEvent(globalTouchEvent event)
+int wrapApp::default_OnTouchEvent(globalTouchEvent event)
 {
   if (event != SwipeRight) { return true; }
 
@@ -37,13 +37,13 @@ bool wrapApp::OnTouchEvent(Pinetime::Applications::TouchEvents event)
 {
   switch (event) {
     case TouchEvents::Tap:
-	    return tcb(Tap);
+	    return tcb(Tap) == 1;
 	  break;
     case TouchEvents::SwipeLeft:
-	    return tcb(SwipeLeft);
+	    return tcb(SwipeLeft) == 1;
 	  break;
     case TouchEvents::SwipeRight:
-	    return tcb(SwipeRight);
+	    return tcb(SwipeRight) == 1;
 	  break;
 	default:
 	  return false;
