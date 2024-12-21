@@ -1,6 +1,6 @@
 #include "compat.h"
 
-///*
+/*
 int extern_main()
 {
 	show_int(6);
@@ -25,7 +25,6 @@ systemtask/SystemTask.cpp:
  * touch event listener, left swipe event, right swipe event
 */
 
-#if false
 int isOn = 0;
 enum brightness_level brightnessLevel = lo;
 int OnTouchEvent(enum globalTouchEvent event); // forward declare
@@ -128,4 +127,3 @@ int OnTouchEvent(enum globalTouchEvent event)
 
   return 0;
 }
-#endif

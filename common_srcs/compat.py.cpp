@@ -18,39 +18,55 @@ void make_label(char *text)
 
 void show_int(int i)
 {
-    mp_obj_t* instr = mp_obj_new_str("show_int", strlen("show_int")); // string
-															  //
-    // mp_obj_t* options = m_new(mp_obj_t, 1);
-    // options[0] = mp_obj_new_int(i);
+    mp_obj_t* instr = mp_obj_new_str("show_int", strlen("show_int")); // create py string
 
 	mp_obj_t* args = m_new(mp_obj_t, 2);
 	args[0] = instr;
 	args[1] = mp_obj_new_int(i); // options;
 
     mp_call_function_n_kw(delegate, 2, 0, args);
-    // mp_call_function_2(delegate, instr, options);
     m_del(args, args, 2); // delete args object
 }
 
 // places a label centrered at x, y.
 void place_label(const char* text, int x, int y)
 {
+    mp_obj_t* instr = mp_obj_new_str("place_label", strlen("place_label")); // create py string
 
-  if (text) return;
-  if (x) return;
-  if (y) return;
+	mp_obj_t* args = m_new(mp_obj_t, 4);
+	args[0] = instr;
+    args[1]  = mp_obj_new_str(text, strlen(text));
+	args[2] = mp_obj_new_int(x);
+	args[3] = mp_obj_new_int(y);
+
+    mp_call_function_n_kw(delegate, 4, 0, args);
+    m_del(args, args, 4); // delete args object
 }
 
 void set_colours(uint32_t fg, uint32_t bg)
 {
-  if (fg) return;
-  if (bg) return;
+    mp_obj_t* instr = mp_obj_new_str("set_colours", strlen("set_colours")); // create py string
+
+	mp_obj_t* args = m_new(mp_obj_t, 3);
+	args[0] = instr;
+	args[1] = mp_obj_new_int(fg);
+	args[2] = mp_obj_new_int(bg);
+
+    mp_call_function_n_kw(delegate, 3, 0, args);
+    m_del(args, args, 3); // delete args object
 }
 // set the foreground and background colours for drawing.
 
 void set_brightness(enum brightness_level bl)
 {
-  if (bl) return;
+    mp_obj_t* instr = mp_obj_new_str("set_brightness", strlen("set_brightness")); // create py string
+
+	mp_obj_t* args = m_new(mp_obj_t, 2);
+	args[0] = instr;
+	args[1] = mp_obj_new_int(bl);
+
+    mp_call_function_n_kw(delegate, 2, 0, args);
+    m_del(args, args, 2); // delete args object
 }
 
 void register_global_eventListener(touchCallback e)
@@ -68,5 +84,11 @@ void disable_sleep()
 
 void clear_screen()
 {
+    mp_obj_t* instr = mp_obj_new_str("clear_screen", strlen("clear_screen")); // create py string
 
+	mp_obj_t* args = m_new(mp_obj_t, 1);
+	args[0] = instr;
+
+    mp_call_function_n_kw(delegate, 1, 0, args);
+    m_del(args, args, 1); // delete args object
 }
