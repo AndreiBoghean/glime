@@ -1,12 +1,13 @@
 #include "compat.h"
 #include "py/runtime.h"
 #include "py/misc.h" // memory allocation is in misc for some reason lol
+#include "string.h"
 
-mp_obj_t draw_string_callback;
+mp_obj_t delegate;
 
-void init(void* _draw_string_callback)
+void init(void* _delegate)
 {
-	draw_string_callback = * ((mp_obj_t*) _draw_string_callback);
+	delegate = * ((mp_obj_t*) _delegate);
 }
 
 void make_label(char *text)
@@ -17,17 +18,18 @@ void make_label(char *text)
 
 void show_int(int i)
 {
-	mp_obj_t* args = m_new(mp_obj_t, 5);
-	char numba = (char) (48 + i);
+    mp_obj_t* instr = mp_obj_new_str("show_int", strlen("show_int")); // string
+															  //
+    // mp_obj_t* options = m_new(mp_obj_t, 1);
+    // options[0] = mp_obj_new_int(i);
 
-	args[0] = mp_obj_new_str(&numba, 1); // string
-	args[1] = mp_obj_new_int(0); // x
-	args[2] = mp_obj_new_int(108); // y
-	args[3] = mp_obj_new_int(240); // width
-	args[4] = mp_obj_new_bool(0); // right justify?
-								  //
-	mp_call_function_n_kw(draw_string_callback, 5, 0, args);
-	m_del(mp_obt_t, args, 5);
+	mp_obj_t* args = m_new(mp_obj_t, 2);
+	args[0] = instr;
+	args[1] = mp_obj_new_int(i); // options;
+
+    mp_call_function_n_kw(delegate, 2, 0, args);
+    // mp_call_function_2(delegate, instr, options);
+    m_del(args, args, 2); // delete args object
 }
 
 // places a label centrered at x, y.

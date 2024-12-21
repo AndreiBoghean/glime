@@ -6,6 +6,8 @@
 STATIC mp_obj_t gateway_handle_main(mp_obj_t draw_string_callback) {
 	init(&draw_string_callback);
 	extern_main();
+
+	return mp_const_none;
 }
 
 // bind our (1 argument) function name to a new "gateway_XMHlet_obj" python object
