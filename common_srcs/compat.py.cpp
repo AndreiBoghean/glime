@@ -3,11 +3,19 @@
 #include "py/misc.h" // memory allocation is in misc for some reason lol
 #include "string.h"
 
-mp_obj_t delegate;
+STATIC mp_obj_t delegate;
+touchCallback* tcb_pointer;
 
-void init(void* _delegate)
+typedef struct {
+	mp_obj_t delegator;
+	touchCallback* tcb_pointer;
+} setups_t;
+
+void init(void* _setupts)
 {
-	delegate = * ((mp_obj_t*) _delegate);
+	setups_t* setups = (setups_t*) _setupts;
+	delegate = setups->delegator;
+	tcb_pointer = setups->tcb_pointer;
 }
 
 void make_label(char *text)
@@ -71,7 +79,7 @@ void set_brightness(enum brightness_level bl)
 
 void register_global_eventListener(touchCallback e)
 {
-  if (e) return;
+  *tcb_pointer = e;
 }
 // ^ callback returns a boolean according to whether it actioned on the event or not
 // if it DID action, then we finalise that "event" and move on to detecting the next one.

@@ -3,8 +3,39 @@
 #include "externApp.h"
 #include "compat.h"
 
-STATIC mp_obj_t gateway_handle_main(mp_obj_t draw_string_callback) {
-	init(&draw_string_callback);
+touchCallback tcb;
+mp_obj_t touch_handler(mp_obj_t arg)
+{
+	int eventID = mp_obj_get_int(arg);
+	switch (eventID) {
+		case -1:
+    		// return mp_obj_new_str("unimpl event", strlen("unimpl event")); // create py string
+		break;
+		case 0:
+    		// return mp_obj_new_str("zero", strlen("zero")); // create py string
+			tcb(Tap);
+		break;
+		case 3:
+    		// return mp_obj_new_str("tree", strlen("tree")); // create py string
+			tcb(SwipeLeft);
+		break;
+		case 4:
+    		// return mp_obj_new_str("floor", strlen("floor")); // create py string
+			tcb(SwipeRight);
+		break;
+	}
+
+	return mp_const_none;
+}
+
+typedef struct {
+	mp_obj_t delegator;
+	touchCallback* tcb;
+} setups_t;
+
+STATIC mp_obj_t gateway_handle_main(mp_obj_t delegator) {
+	setups_t setups = {delegator, &tcb};
+	init((void*) &setups);
 	extern_main();
 
 	return mp_const_none;
@@ -12,11 +43,13 @@ STATIC mp_obj_t gateway_handle_main(mp_obj_t draw_string_callback) {
 
 // bind our (1 argument) function name to a new "gateway_XMHlet_obj" python object
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(gateway_mainer_obj, gateway_handle_main);
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(touch_handler_obj, touch_handler);
 
 // bind objects 4 stuff to python names 4 stuff
 STATIC const mp_rom_map_elem_t gateway_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_gateway) },
     { MP_ROM_QSTR(MP_QSTR_handle_main), MP_ROM_PTR(&gateway_mainer_obj) },
+    { MP_ROM_QSTR(MP_QSTR_touch_handler), MP_ROM_PTR(&touch_handler_obj) },
 };
 
 

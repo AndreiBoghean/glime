@@ -39,7 +39,7 @@ def delegate(*_args):
     elif operation == "set_brightness":
         wasp.system.brightness = args[0]+1
     elif operation == "clear_screen":
-        wasp.system.drawable.fill()
+        wasp.watch.drawable.fill()
 
 class WrapApp():
     """A hello world application for wasp-os."""
@@ -50,6 +50,7 @@ class WrapApp():
 
     def foreground(self):
         self._draw()
+        wasp.system.request_event(wasp.EventMask.TOUCH | wasp.EventMask.SWIPE_LEFTRIGHT)
 
     def _draw(self):
         draw = wasp.watch.drawable
@@ -60,17 +61,15 @@ class WrapApp():
         # external.exern_main_handler(lambda : draw.string("Hello, world!", 0, 108, width=240) )
         # gateway.handle_main(draw.string)
         gateway.handle_main(delegate)
+
     
     def touch(self, event):
-        pass
+        print("we've been touched")
+        wasp.watch.drawable.string(gateway.touch_handler(0), 0, 108)
 
         
     def swipe(self, event):
-        return # implementation not finished; disable for now.
-
-        if self.running:
-            # get an ID representation for the tocuh event, which we pass to our function,
-            # which converts it to a C enum and then gives it to the user-provided event listener.
-            touch_handler({wasp.EventType.Left: 3, wasp.EventType.RIGHT: 4}.get(key, -1))
-        else:
-            return True
+        print("we've been swiped")
+        # get an ID representation for the tocuh event, which we pass to our function,
+        # which converts it to a C enum and then gives it to the user-provided event listener.
+        wasp.watch.drawable.string(gateway.touch_handler({wasp.EventType.LEFT: 3, wasp.EventType.RIGHT: 4}.get(event[0], -1)), 0, 108)
