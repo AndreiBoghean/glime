@@ -84,6 +84,7 @@ void Toggle() {
   } else {
     set_brightness(lo); // set brightness using brightness controller
   }
+  clear_screen(); // prepare for drawing the next screen state.
 }
 
 int OnTouchEvent(enum globalTouchEvent event)
