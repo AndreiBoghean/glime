@@ -55,10 +55,10 @@ void show_int(int i)
 
 // set the foreground and background colours for drawing.
 lv_color_t fg_colour;
+lv_color_t bg_colour;
 void set_colours(uint32_t fg, uint32_t bg)
 {
-  // set the background colour for the current "screen" instance.
-  lv_obj_set_style_local_bg_color(lv_scr_act(), LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(bg));
+  bg_colour = lv_color_hex(bg);
   fg_colour = lv_color_hex(fg);
 }
 
@@ -98,4 +98,6 @@ void disable_sleep()
 void clear_screen()
 {
   lv_obj_clean(lv_scr_act());
+  // update the background colour for the current "screen" instance.
+  lv_obj_set_style_local_bg_color(lv_scr_act(), LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, bg_colour);
 }
