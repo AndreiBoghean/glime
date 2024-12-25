@@ -8,10 +8,11 @@ using namespace Pinetime::Applications::Screens;
 typedef struct {
 	Pinetime::Applications::AppControllers* controllers;
 	touchCallback* tcb;
+	touchCallback_xy* tcb_xy;
 } setups_t;
 
 wrapApp::wrapApp(AppControllers& controllers) {
-  setups_t setups = {&controllers, &tcb};
+  setups_t setups = {&controllers, &tcb, &tcb_xy};
   init((void*) &setups);
   extern_main();
 
@@ -23,14 +24,21 @@ wrapApp::wrapApp(AppControllers& controllers) {
 
 int wrapApp::default_OnTouchEvent(globalTouchEvent event)
 {
-  if (event != SwipeRight) { return true; }
+  if (event != SwipeRight) { return 1; }
 
   lv_obj_t* title = lv_label_create(lv_scr_act(), nullptr);
   lv_label_set_text_static(title, "My test application");
   lv_label_set_align(title, LV_LABEL_ALIGN_CENTER);
   lv_obj_align(title, lv_scr_act(), LV_ALIGN_IN_TOP_LEFT, 0, 0);
 
-  return true;
+  return 1;
+}
+
+int wrapApp::default_OnTouchEvent_xy(uint16_t x, uint16_t y)
+{
+	if (x == 0) return 0;
+	if (y == 0) return 0;
+	return 0;
 }
 
 bool wrapApp::OnTouchEvent(Pinetime::Applications::TouchEvents event)
@@ -50,6 +58,11 @@ bool wrapApp::OnTouchEvent(Pinetime::Applications::TouchEvents event)
 	  break;
   }
   return true;
+}
+
+bool wrapApp::OnTouchEvent(uint16_t x, uint16_t y)
+{
+	return tcb_xy(x, y) == 1;
 }
 
 wrapApp::~wrapApp() {

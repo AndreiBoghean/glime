@@ -6,8 +6,10 @@
 #include "Symbols.h"
 
 #include "compat.h"
+#include <cstdint>
 
 typedef int (*touchCallback)(globalTouchEvent e); // needed for delegating event handlers.
+typedef int (*touchCallback_xy)(uint16_t x, uint16_t y); // needed for delegating event handlers.
 namespace Pinetime {
   namespace Applications {
     namespace Screens {
@@ -16,9 +18,12 @@ namespace Pinetime {
         wrapApp(AppControllers& controllers);
         ~wrapApp() override;
         bool OnTouchEvent(Pinetime::Applications::TouchEvents event) override;
+        bool OnTouchEvent(uint16_t x, uint16_t y) override;
 	  private:
 		touchCallback tcb = &default_OnTouchEvent;
+		touchCallback_xy tcb_xy = &default_OnTouchEvent_xy;
 		static int default_OnTouchEvent(globalTouchEvent event);
+		static int default_OnTouchEvent_xy(uint16_t x, uint16_t y);
       };
     }
     

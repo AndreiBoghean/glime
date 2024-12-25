@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <stdint.h>
 
 void init(void* setups);
@@ -20,6 +21,9 @@ void register_global_eventListener(touchCallback e);
 // ^ callback returns a boolean according to whether it actioned on the event or not
 // if it DID action, then we finalise that "event" and move on to detecting the next one.
 // i.e. we use the return to decide whether to call lvgl.CancelTap();
+
+typedef int (*touchCallback_xy)(uint16_t x, uint16_t y);
+void register_global_eventListener_xy(touchCallback_xy e);
 
 void disable_sleep();
 
