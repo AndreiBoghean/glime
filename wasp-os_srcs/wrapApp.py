@@ -4,6 +4,8 @@
 import wasp
 import gateway
 
+import binascii
+
 
 def rgb888_to_rgb565(red8, green8, blue8):
     # Convert 8-bit red to 5-bit red.
@@ -33,12 +35,15 @@ def delegate(*_args):
     elif operation == "set_colours":
         parsed_fg = rgb888_to_rgb565(args[0] >> 8*2, (args[0] >> 8) & 0xFF, args[0] & 0xFF)
         parsed_bg = rgb888_to_rgb565(args[1] >> 8*2, (args[1] >> 8) & 0xFF, args[1] & 0xFF)
+        print("converted fg", args[0], "->", parsed_fg, "and bg", args[1], "->", parsed_bg)
         wasp.watch.drawable.set_color(parsed_fg, parsed_bg)
     elif operation == "place_label":
         wasp.watch.drawable.string(str(args[0]), args[1], args[2])
     elif operation == "set_brightness":
+        print("setting brightness to", str(args[0]+1))
         wasp.system.brightness = args[0]+1
     elif operation == "clear_screen":
+        print("clearing screen... colours are", wasp.watch.drawable._bgfg, "(", hex(wasp.watch.drawable._bgfg), ")")
         wasp.watch.drawable.fill()
 
 class WrapApp():
@@ -65,11 +70,11 @@ class WrapApp():
     
     def touch(self, event):
         print("we've been touched")
-        wasp.watch.drawable.string(gateway.touch_handler(0), 0, 108)
+        gateway.touch_handler(0)
 
         
     def swipe(self, event):
         print("we've been swiped")
         # get an ID representation for the tocuh event, which we pass to our function,
         # which converts it to a C enum and then gives it to the user-provided event listener.
-        wasp.watch.drawable.string(gateway.touch_handler({wasp.EventType.LEFT: 3, wasp.EventType.RIGHT: 4}.get(event[0], -1)), 0, 108)
+        gateway.touch_handler({wasp.EventType.LEFT: 3, wasp.EventType.RIGHT: 4}.get(event[0], -1))
