@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdint>
 #include <stdint.h>
 
 void init(void* setups);
@@ -15,7 +14,7 @@ void set_colours(uint32_t fg, uint32_t bg);
 enum brightness_level {lo, med, hi};
 void set_brightness(enum brightness_level bl);
 
-enum globalTouchEvent {Tap, SwipeLeft, SwipeRight};
+enum globalTouchEvent {Tap, TapDouble, TapLong, SwipeLeft, SwipeRight, SwipeUp, SwipeDown};
 typedef int (*touchCallback)(enum globalTouchEvent e);
 void register_global_eventListener(touchCallback e);
 // ^ callback returns a boolean according to whether it actioned on the event or not
@@ -28,3 +27,5 @@ void register_global_eventListener_xy(touchCallback_xy e);
 void disable_sleep();
 
 void clear_screen();
+
+void draw_rect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);

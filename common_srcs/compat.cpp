@@ -11,9 +11,11 @@
 #include "components/brightness/BrightnessController.h"
 #include "systemtask/SystemTask.h"
 #include <cstdint>
+#include <cstdlib>
 #include <lvgl/lvgl.h>
-#include <string>
 
+#include "displayapp/LittleVgl.h"
+#include "components/motor/MotorController.h"
 // note: callback returns a boolean according to whether it actioned on the event or not
 // if it DID action, then we finalise that "event" and move on to detecting the next one.
 // i.e. we use the return to decide whether to call lvgl.CancelTap();
@@ -94,7 +96,7 @@ void register_global_eventListener(touchCallback e)
 {
   *tcb = e;
 }
-void register_global_eventListener(touchCallback_xy e)
+void register_global_eventListener_xy(touchCallback_xy e)
 {
   *tcb_xy = e;
 }
@@ -109,4 +111,55 @@ void clear_screen()
   lv_obj_clean(lv_scr_act());
   // update the background colour for the current "screen" instance.
   lv_obj_set_style_local_bg_color(lv_scr_act(), LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, bg_colour);
+}
+
+void draw_rect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
+{
+	// lv_obj_t * rect = lv_obj_create(lv_scr_act(), nullptr);
+	// lv_obj_set_size(rect , x2-x1, y2-y1);
+	// lv_obj_set_pos(rect , x1, y1);
+	// lv_obj_set_style_local_bg_color(rect, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, fg_colour);
+
+	/*
+    lv_area_t area;
+    area.x1 = x1;
+    area.y1 = y1;
+    area.x2 = x2;
+    area.y2 = y2;
+
+	int bufferSize = (x2-x1+1)*(y2-y1+1);
+	lv_color_t* b = (lv_color_t*) std::malloc(sizeof(lv_color_t) * bufferSize);
+	std::fill(b, b + bufferSize, fg_colour);
+
+    controllers->lvgl.SetFullRefresh(Pinetime::Components::LittleVgl::FullRefreshDirections::None);
+    controllers->lvgl.FlushDisplay(&area, b);
+
+	free(b);
+	*/
+
+	if (x1 > 240) x1 = 240;
+	if (x2 > 240) x2 = 240;
+	if (y1 > 240) y1 = 240;
+	if (y2 > 240) y2 = 240;
+
+    lv_area_t area;
+    area.x1 = x1;
+    area.y1 = y1;
+    area.x2 = x1;
+    area.y2 = y1;
+
+	lv_color_t b = fg_colour;
+	// std::fill(b, b + bufferSize, fg_colour);
+
+    controllers->lvgl.SetFullRefresh(Pinetime::Components::LittleVgl::FullRefreshDirections::None);
+
+	for (int y = y1 ; y < y2 ;  y++)
+		for (int x = x1 ; x < x2 ; x++)
+		{
+			area.x1 = x;
+			area.x2 = x;
+			area.y1 = y;
+			area.y2 = y;
+			controllers->lvgl.FlushDisplay(&area, &b);
+		}
 }

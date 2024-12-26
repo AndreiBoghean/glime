@@ -47,11 +47,23 @@ bool wrapApp::OnTouchEvent(Pinetime::Applications::TouchEvents event)
     case TouchEvents::Tap:
 	    return tcb(Tap) == 1;
 	  break;
+    case TouchEvents::DoubleTap:
+	    return tcb(TapDouble) == 1;
+	  break;
+    case TouchEvents::LongTap:
+	    return tcb(TapLong) == 1;
+	  break;
     case TouchEvents::SwipeLeft:
 	    return tcb(SwipeLeft) == 1;
 	  break;
     case TouchEvents::SwipeRight:
 	    return tcb(SwipeRight) == 1;
+	  break;
+    case TouchEvents::SwipeUp:
+	    return tcb(SwipeUp) == 1;
+	  break;
+    case TouchEvents::SwipeDown:
+	    return tcb(SwipeDown) == 1;
 	  break;
 	default:
 	  return false;
