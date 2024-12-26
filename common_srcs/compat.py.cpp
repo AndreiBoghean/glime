@@ -5,10 +5,12 @@
 
 STATIC mp_obj_t delegate;
 touchCallback* tcb_pointer;
+touchCallback_xy* tcb_xy_pointer;
 
 typedef struct {
 	mp_obj_t delegator;
 	touchCallback* tcb_pointer;
+	touchCallback_xy* tcb_xy_pointer;
 } setups_t;
 
 void init(void* _setupts)
@@ -16,6 +18,7 @@ void init(void* _setupts)
 	setups_t* setups = (setups_t*) _setupts;
 	delegate = setups->delegator;
 	tcb_pointer = setups->tcb_pointer;
+	tcb_xy_pointer = setups->tcb_xy_pointer;
 }
 
 void make_label(char *text)
@@ -81,6 +84,11 @@ void register_global_eventListener(touchCallback e)
 {
   *tcb_pointer = e;
 }
+
+void register_global_eventListener_xy(touchCallback_xy e)
+{
+  *tcb_xy_pointer = e;
+}
 // ^ callback returns a boolean according to whether it actioned on the event or not
 // if it DID action, then we finalise that "event" and move on to detecting the next one.
 // i.e. we use the return to decide whether to call lvgl.CancelTap();
@@ -96,6 +104,22 @@ void clear_screen()
 
 	mp_obj_t* args = m_new(mp_obj_t, 1);
 	args[0] = instr;
+
+    mp_call_function_n_kw(delegate, 1, 0, args);
+    m_del(args, args, 1); // delete args object
+}
+
+void draw_rect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
+{
+    mp_obj_t* instr = mp_obj_new_str("draw_rect", strlen("draw_rect")); // create py string
+
+	mp_obj_t* args = m_new(mp_obj_t, 5);
+	args[0] = instr;
+	args[1] = mp_obj_new_int(x1);
+	args[2] = mp_obj_new_int(y1);
+	args[3] = mp_obj_new_int(x2);
+	args[4] = mp_obj_new_int(y2);
+
 
     mp_call_function_n_kw(delegate, 1, 0, args);
     m_del(args, args, 1); // delete args object

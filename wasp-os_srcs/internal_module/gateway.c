@@ -4,9 +4,12 @@
 #include "compat.h"
 
 touchCallback tcb;
-mp_obj_t touch_handler(mp_obj_t arg)
+touchCallback_xy tcb_xy;
+mp_obj_t touch_handler(mp_obj_t py_eventID, mp_obj_t py_x, mp_obj_t py_y)
 {
-	int eventID = mp_obj_get_int(arg);
+	int eventID = mp_obj_get_int(py_eventID);
+	int x = mp_obj_get_int(py_x);
+	int y = mp_obj_get_int(py_y);
 	switch (eventID) {
 		case -1:
     		// return mp_obj_new_str("unimpl event", strlen("unimpl event")); // create py string
@@ -14,6 +17,7 @@ mp_obj_t touch_handler(mp_obj_t arg)
 		case 0:
     		// return mp_obj_new_str("zero", strlen("zero")); // create py string
 			tcb(Tap);
+			tcb_xy(x, y);
 		break;
 		case 3:
     		// return mp_obj_new_str("tree", strlen("tree")); // create py string
@@ -34,7 +38,7 @@ typedef struct {
 } setups_t;
 
 STATIC mp_obj_t gateway_handle_main(mp_obj_t delegator) {
-	setups_t setups = {delegator, &tcb};
+	setups_t setups = {delegator, &tcb, &tcb_xy};
 	init((void*) &setups);
 	extern_main();
 
