@@ -27,7 +27,7 @@ sdk="$infi_libs/nRF5_SDK_15.3.0_59ac345/"
 echo "toolchain" "$toolchain"
 echo "sdk" "$sdk"
 
-cmake ../ -DARM_NONE_EABI_TOOLCHAIN_PATH=$toolchain -DNRF5_SDK_PATH=$sdk -DBUILD_DFU=1 -DBUILD_RESOURCES=1 -DENABLE_USERAPPS="Apps::wrapApp"
+cmake ../ -DARM_NONE_EABI_TOOLCHAIN_PATH=$toolchain -DNRF5_SDK_PATH=$sdk -DBUILD_DFU=1 -DBUILD_RESOURCES=1 -DENABLE_USERAPPS="Apps::wrapApp, Apps::Paint"
 echo $(pwd)
 
 make -j4 pinetime-mcuboot-app
