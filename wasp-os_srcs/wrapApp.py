@@ -45,6 +45,11 @@ def delegate(*_args):
     elif operation == "clear_screen":
         print("clearing screen... colours are", wasp.watch.drawable._bgfg, "(", hex(wasp.watch.drawable._bgfg), ")")
         wasp.watch.drawable.fill()
+    elif operation == "draw_rect":
+        w = args[2] - args[0] + 1
+        h = args[3] - args[1] + 1
+        tempCol = bg = wasp.watch.drawable._bgfg & 0xFFFF # just the foreground colour.
+        wasp.watch.drawable.fill(bg=tempCol, x=args[0], y=args[1], w=w, h=h)
 
 class WrapApp():
     """A hello world application for wasp-os."""
@@ -55,7 +60,7 @@ class WrapApp():
 
     def foreground(self):
         self._draw()
-        wasp.system.request_event(wasp.EventMask.TOUCH | wasp.EventMask.SWIPE_LEFTRIGHT)
+        wasp.system.request_event(wasp.EventMask.TOUCH | wasp.EventMask.SWIPE_LEFTRIGHT | wasp.EventMask.SWIPE_UPDOWN)
 
     def _draw(self):
         draw = wasp.watch.drawable
@@ -69,12 +74,21 @@ class WrapApp():
 
     
     def touch(self, event):
-        print("we've been touched")
-        gateway.touch_handler(0)
+        # print("we've been touched", "|"+event[1]+"|", "|"+event[2]+"|")
+        print("we've been touched", str(event))
+        # print("0:", event[0])
+        # print("0:", type(event[0]))
+        # print("1:", event[1])
+        # print("1:", type(event[1]))
+        # print("2:", event[2])
+        # print("2:", type(event[2]))
+        gateway.touch_handler(0, int(event[1]), int(event[2]))
+        
+        wasp.watch.touch.reset_touch_data()
 
         
     def swipe(self, event):
         print("we've been swiped")
         # get an ID representation for the tocuh event, which we pass to our function,
         # which converts it to a C enum and then gives it to the user-provided event listener.
-        gateway.touch_handler({wasp.EventType.LEFT: 3, wasp.EventType.RIGHT: 4}.get(event[0], -1))
+        gateway.touch_handler({wasp.EventType.UP: 1, wasp.EventType.DOWN: 2, wasp.EventType.LEFT: 3, wasp.EventType.RIGHT: 4}.get(event[0], -1), -1, -1)

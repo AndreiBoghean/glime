@@ -15,16 +15,19 @@ mp_obj_t touch_handler(mp_obj_t py_eventID, mp_obj_t py_x, mp_obj_t py_y)
     		// return mp_obj_new_str("unimpl event", strlen("unimpl event")); // create py string
 		break;
 		case 0:
-    		// return mp_obj_new_str("zero", strlen("zero")); // create py string
 			tcb(Tap);
 			tcb_xy(x, y);
 		break;
+		case 1:
+			tcb(SwipeUp);
+		break;
+		case 2:
+			tcb(SwipeDown);
+		break;
 		case 3:
-    		// return mp_obj_new_str("tree", strlen("tree")); // create py string
 			tcb(SwipeLeft);
 		break;
 		case 4:
-    		// return mp_obj_new_str("floor", strlen("floor")); // create py string
 			tcb(SwipeRight);
 		break;
 	}
@@ -35,6 +38,7 @@ mp_obj_t touch_handler(mp_obj_t py_eventID, mp_obj_t py_x, mp_obj_t py_y)
 typedef struct {
 	mp_obj_t delegator;
 	touchCallback* tcb;
+	touchCallback_xy* tcb_xy;
 } setups_t;
 
 STATIC mp_obj_t gateway_handle_main(mp_obj_t delegator) {
@@ -47,7 +51,7 @@ STATIC mp_obj_t gateway_handle_main(mp_obj_t delegator) {
 
 // bind our (1 argument) function name to a new "gateway_XMHlet_obj" python object
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(gateway_mainer_obj, gateway_handle_main);
-STATIC MP_DEFINE_CONST_FUN_OBJ_1(touch_handler_obj, touch_handler);
+STATIC MP_DEFINE_CONST_FUN_OBJ_3(touch_handler_obj, touch_handler);
 
 // bind objects 4 stuff to python names 4 stuff
 STATIC const mp_rom_map_elem_t gateway_module_globals_table[] = {

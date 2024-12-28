@@ -121,6 +121,6 @@ void draw_rect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
 	args[4] = mp_obj_new_int(y2);
 
 
-    mp_call_function_n_kw(delegate, 1, 0, args);
-    m_del(args, args, 1); // delete args object
+    mp_call_function_n_kw(delegate, 5, 0, args);
+    m_del(args, args, 5); // delete args object
 }
