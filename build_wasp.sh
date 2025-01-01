@@ -23,4 +23,5 @@ PATH="$PATH:$wasp_libs/gcc-arm-none-eabi-10-2020-q4-major/bin/"
 make submodules
 make softdevice
 
+make -j `nproc` BOARD=pinetime clean
 make -j `nproc` BOARD=pinetime all

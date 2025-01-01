@@ -27,7 +27,8 @@ sdk="$infi_libs/nRF5_SDK_15.3.0_59ac345/"
 echo "toolchain" "$toolchain"
 echo "sdk" "$sdk"
 
-cmake ../ -DARM_NONE_EABI_TOOLCHAIN_PATH=$toolchain -DNRF5_SDK_PATH=$sdk -DBUILD_DFU=1 -DBUILD_RESOURCES=1 -DENABLE_USERAPPS="Apps::wrapApp, Apps::Paint"
+# cmake ../ -DARM_NONE_EABI_TOOLCHAIN_PATH=$toolchain -DNRF5_SDK_PATH=$sdk -DBUILD_DFU=1 -DBUILD_RESOURCES=1 -DENABLE_USERAPPS="Apps::wrapApp, Apps::Paint, Apps::HeartRate"
+# ^ we actually shouldnt be cmake-ing in the quick build cause the build dir is presumably already present
 echo $(pwd)
 
 # make -j4 pinetime-mcuboot-app
