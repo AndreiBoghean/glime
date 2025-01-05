@@ -29,3 +29,10 @@ void disable_sleep();
 void clear_screen();
 
 void draw_rect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
+
+void start_read_hr();
+void stop_read_hr();
+int get_hr_bpm();
+
+typedef void (*timer_interrupt_callback)();
+void register_timer_interrupt(timer_interrupt_callback action, int period_ms);

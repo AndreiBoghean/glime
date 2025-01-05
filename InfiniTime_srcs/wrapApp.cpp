@@ -5,16 +5,20 @@
 
 using namespace Pinetime::Applications::Screens;
 
+lv_task_t* taskObj;
 typedef struct {
 	Pinetime::Applications::AppControllers* controllers;
 	touchCallback* tcb;
 	touchCallback_xy* tcb_xy;
+	timer_interrupt_callback* ticb;
 } setups_t;
 
 wrapApp::wrapApp(AppControllers& controllers) {
-  setups_t setups = {&controllers, &tcb, &tcb_xy};
+  setups_t setups = {&controllers, &tcb, &tcb_xy, &ticb};
   init((void*) &setups);
   extern_main();
+
+  // taskObj = lv_task_create(RefreshTaskCallback, 1000, LV_TASK_PRIO_MID, this);
 
   // lv_obj_t* title = lv_label_create(lv_scr_act(), nullptr);
   // lv_label_set_text_static(title, "My test application");

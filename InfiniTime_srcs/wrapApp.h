@@ -22,6 +22,7 @@ namespace Pinetime {
 	  private:
 		touchCallback tcb = &default_OnTouchEvent;
 		touchCallback_xy tcb_xy = &default_OnTouchEvent_xy;
+		timer_interrupt_callback ticb = NULL; // no need for a default becaue in this case we dont need to pre-emptively set up the callback.
 		static int default_OnTouchEvent(globalTouchEvent event);
 		static int default_OnTouchEvent_xy(uint16_t x, uint16_t y);
       };

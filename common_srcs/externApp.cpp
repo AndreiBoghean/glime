@@ -1,40 +1,37 @@
 #include "compat.h"
 #include "stdint.h"
+#include <cstdio>
 
-int OnTouchEvent(enum globalTouchEvent event); // forward declare
-int OnTouchEvent_xy(uint16_t x, uint16_t y); // forward declare
+void pollHeartRate()
+{
+  int bpm = get_hr_bpm();
+  char bpm_s[4];
+  // sprintf(bpm_s, "%03d", bpm);
+  if (bpm) bpm = 0;
+  bpm_s[0] = '1';
+  bpm_s[1] = '2';
+  bpm_s[2] = '3';
+  bpm_s[3] = '\0';
+  place_label(bpm_s, 100, 100);
+}
+
+int numba2 = 0;
+void temp2() {
+  clear_screen();
+  numba2 = (numba2+1)%7;
+
+  show_int(numba2);
+  return;
+}
+
 
 int extern_main()
 {
-  register_global_eventListener(OnTouchEvent);
-  register_global_eventListener_xy(OnTouchEvent_xy);
+  set_colours(0x00FF00, 0xFFFF00);
+  // TODO: CHANGE THE DEFAULT FG COLOUR SO IT'S NOT BLACK
+  
+  // start_read_hr();
+  // register_timer_interrupt(pollHeartRate, 1000);
+  register_timer_interrupt(temp2, 1000);
   return 0;
-}
-
-int colI = 10000; // start with a large number so the user cant immediately swipe to go negative
-int size = 10;
-int OnTouchEvent_xy(uint16_t x, uint16_t y)
-{
-  // clear_screen(); // prepare for drawing the next screen state.
-
-  uint32_t colours[] = {0xFF0000, 0xFF00FF, 0xFFFF00, 0x00FFFF, 0x0000FF};
-
-  set_colours(colours[colI % 5], 0x0);
-  draw_rect(x, y, x+size, y+size);
-  // SetColors();
-  return 1;
-}
-
-int OnTouchEvent(enum globalTouchEvent event)
-{
-	if (event == SwipeLeft)
-	{
-		colI--;
-		return 1;
-	}
-	else if (event == SwipeRight) {
-		colI++;
-		return 1;
-	}
-	return 1; // we actually want to return 1, so that swipe up / down events arent aditionally processed and subsequently trigger the app close gesture
 }

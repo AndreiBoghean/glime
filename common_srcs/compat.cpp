@@ -16,6 +16,9 @@
 
 #include "displayapp/LittleVgl.h"
 #include "components/motor/MotorController.h"
+
+#include "components/heartrate/HeartRateController.h"
+
 // note: callback returns a boolean according to whether it actioned on the event or not
 // if it DID action, then we finalise that "event" and move on to detecting the next one.
 // i.e. we use the return to decide whether to call lvgl.CancelTap();
@@ -26,19 +29,27 @@ typedef struct {
 	Pinetime::Applications::AppControllers* controllers;
 	touchCallback* tcb;
 	touchCallback_xy* tcb_xy;
+	timer_interrupt_callback* ticb;
 } setups_t;
 
-touchCallback* tcb; // a pointer to a pointer to a function.
-					 // we ALWAYS tell InfiniTime to use this pointer when handling events,
-					 // but we have a dummy handler initially which gets swapped out whenever we actually
-					 // want to handle the events.
+touchCallback* tcb; 
 touchCallback_xy* tcb_xy;
+timer_interrupt_callback* ticb;
+// ^ pointers to a pointer to a function.hid
+// we ALWAYS tell InfiniTime to use these pointer when handling events,
+// but we have a dummy handler initially which gets swapped out whenever we actually
+// want to handle the events.
+
+lv_color_t fg_colour;
+lv_color_t bg_colour;
+
 void init(void* _s)
 {
 	setups_t* s = (setups_t*) _s;
 	controllers = s->controllers;
 	tcb = (s->tcb);
 	tcb_xy = (s->tcb_xy);
+	ticb = (s->ticb);
 	return;
 }
 
@@ -52,17 +63,17 @@ void show_int(int i)
 
   lv_obj_t* title = lv_label_create(lv_scr_act(), nullptr);
 
-  char numba = (char) (48 + i);
-  lv_label_set_text(title, &numba);
+  char showable[2];
+  showable[0] = (char) (48 + i);
+  showable[1] = '\0';
+  lv_label_set_text(title, showable);
 
   lv_label_set_align(title, LV_LABEL_ALIGN_CENTER);
   lv_obj_align(title, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
-
+  lv_obj_set_style_local_text_color(title, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, fg_colour);
 }
 
 // set the foreground and background colours for drawing.
-lv_color_t fg_colour;
-lv_color_t bg_colour;
 void set_colours(uint32_t fg, uint32_t bg)
 {
   bg_colour = lv_color_hex(bg);
@@ -162,4 +173,32 @@ void draw_rect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
 			area.y2 = y;
 			controllers->lvgl.FlushDisplay(&area, &b);
 		}
+}
+
+void start_read_hr()
+{
+    controllers->heartRateController.Start();
+}
+
+void stop_read_hr()
+{
+    controllers->heartRateController.Stop();
+}
+
+int get_hr_bpm()
+{
+	return controllers->heartRateController.HeartRate();
+}
+
+void _RefreshTaskCallback(lv_task_t* task) {
+  // static_cast<Screen*>(task->user_data)->Refresh();
+  timer_interrupt_callback* ticb = static_cast<timer_interrupt_callback*>(task->user_data);
+  (*ticb)();
+}
+
+void register_timer_interrupt(timer_interrupt_callback action, int period_ms)
+{
+	*ticb = action;
+	// lv_task_create(Pinetime::Applications::Screens::Screen::RefreshTaskCallback, period_ms, LV_TASK_PRIO_MID, NULL);
+	lv_task_create(_RefreshTaskCallback, period_ms, LV_TASK_PRIO_MID, ticb);
 }
