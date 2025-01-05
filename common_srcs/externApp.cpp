@@ -4,10 +4,9 @@
 int numba2 = 0;
 void pollHeartRate()
 {
-  // numba2 = (numba2+1)%7;
-  // int bpm = 120+numba2; // get_hr_bpm();
+  int bpm = 120+numba2; // get_hr_bpm();
   
-  int bpm = get_hr_bpm();
+  // int bpm = get_hr_bpm();
 
   char bpm_s[4];
   bpm_s[0] = (char) 48+(bpm / 100);
@@ -19,6 +18,11 @@ void pollHeartRate()
   place_label(bpm_s, 100, 70);
 }
 
+void incrementer()
+{
+  numba2 = (numba2+1)%7;
+}
+
 
 int extern_main()
 {
@@ -27,6 +31,6 @@ int extern_main()
   
   start_read_hr();
   register_timer_interrupt(pollHeartRate, 1000);
-  // register_timer_interrupt(temp2, 1000);
+  register_timer_interrupt(incrementer, 500);
   return 0;
 }

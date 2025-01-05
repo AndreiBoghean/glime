@@ -10,11 +10,10 @@ typedef struct {
 	Pinetime::Applications::AppControllers* controllers;
 	touchCallback* tcb;
 	touchCallback_xy* tcb_xy;
-	timer_interrupt_callback* ticb;
 } setups_t;
 
 wrapApp::wrapApp(AppControllers& controllers) {
-  setups_t setups = {&controllers, &tcb, &tcb_xy, &ticb};
+  setups_t setups = {&controllers, &tcb, &tcb_xy};
   init((void*) &setups);
   extern_main();
 

@@ -29,12 +29,10 @@ typedef struct {
 	Pinetime::Applications::AppControllers* controllers;
 	touchCallback* tcb;
 	touchCallback_xy* tcb_xy;
-	timer_interrupt_callback* ticb;
 } setups_t;
 
 touchCallback* tcb; 
 touchCallback_xy* tcb_xy;
-timer_interrupt_callback* ticb;
 // ^ pointers to a pointer to a function.hid
 // we ALWAYS tell InfiniTime to use these pointer when handling events,
 // but we have a dummy handler initially which gets swapped out whenever we actually
@@ -49,7 +47,6 @@ void init(void* _s)
 	controllers = s->controllers;
 	tcb = (s->tcb);
 	tcb_xy = (s->tcb_xy);
-	ticb = (s->ticb);
 	return;
 }
 
@@ -192,13 +189,12 @@ int get_hr_bpm()
 
 void _RefreshTaskCallback(lv_task_t* task) {
   // static_cast<Screen*>(task->user_data)->Refresh();
-  timer_interrupt_callback* ticb = static_cast<timer_interrupt_callback*>(task->user_data);
-  (*ticb)();
+  timer_interrupt_callback ticb = (timer_interrupt_callback) task->user_data;
+  (ticb)();
 }
 
 void register_timer_interrupt(timer_interrupt_callback action, int period_ms)
 {
-	*ticb = action;
 	// lv_task_create(Pinetime::Applications::Screens::Screen::RefreshTaskCallback, period_ms, LV_TASK_PRIO_MID, NULL);
-	lv_task_create(_RefreshTaskCallback, period_ms, LV_TASK_PRIO_MID, ticb);
+	lv_task_create(_RefreshTaskCallback, period_ms, LV_TASK_PRIO_MID, (void*) action);
 }
