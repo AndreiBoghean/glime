@@ -50,13 +50,16 @@ def delegate(*_args):
         h = args[3] - args[1] + 1
         tempCol = bg = wasp.watch.drawable._bgfg & 0xFFFF # just the foreground colour.
         wasp.watch.drawable.fill(bg=tempCol, x=args[0], y=args[1], w=w, h=h)
+    elif operation == "register_timer_interrupt":
+        current_delta = args[0]
+        print("registering timer for", current_delta)
+        wasp.system.request_tick(current_delta)
 
 class WrapApp():
-    """A hello world application for wasp-os."""
     NAME = "Wrap"
 
     def __init__(self):
-        pass
+        self.current_delta = 500
 
     def foreground(self):
         self._draw()
@@ -86,9 +89,13 @@ class WrapApp():
         
         wasp.watch.touch.reset_touch_data()
 
-        
+
     def swipe(self, event):
         print("we've been swiped")
         # get an ID representation for the tocuh event, which we pass to our function,
         # which converts it to a C enum and then gives it to the user-provided event listener.
         gateway.touch_handler({wasp.EventType.UP: 1, wasp.EventType.DOWN: 2, wasp.EventType.LEFT: 3, wasp.EventType.RIGHT: 4}.get(event[0], -1), -1, -1)
+
+    def tick(self, ticks):
+        print("ticked with delta", wasp.system.tick_period_ms)
+        gateway.timer_handler(wasp.system.tick_period_ms)
