@@ -10,6 +10,7 @@ typedef struct {
 } timer_callback_registration_t;
 
 STATIC mp_obj_t delegate;
+STATIC mp_obj_t wrapApp;
 touchCallback* tcb_pointer;
 touchCallback_xy* tcb_xy_pointer;
 timer_callback_registration_t* ticb_regs;
@@ -17,6 +18,7 @@ timer_callback_registration_t* ticb_regs;
 
 typedef struct {
 	mp_obj_t delegator;
+	mp_obj_t wrapApp;
 	touchCallback* tcb_pointer;
 	touchCallback_xy* tcb_xy_pointer;
 	timer_callback_registration_t* ticb_regs;
@@ -26,6 +28,7 @@ void init(void* _setupts)
 {
 	setups_t* setups = (setups_t*) _setupts;
 	delegate = setups->delegator;
+	wrapApp = setups->wrapApp;
 	tcb_pointer = setups->tcb_pointer;
 	tcb_xy_pointer = setups->tcb_xy_pointer;
 	ticb_regs = setups->ticb_regs ;
@@ -172,15 +175,51 @@ void draw_rect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
     m_del(args, args, 5); // delete args object
 }
 
+void hr_poller()
+{
+    mp_obj_t* instr = mp_obj_new_str("ping_hr_data", strlen("ping_hr_data")); // create py string
+
+	mp_obj_t* args = m_new(mp_obj_t, 2);
+	args[0] = instr;
+	args[1] = wrapApp;
+
+    mp_call_function_n_kw(delegate, 2, 0, args);
+    m_del(args, args, 2); // delete args object
+}
 void start_read_hr()
 {
+    mp_obj_t* instr = mp_obj_new_str("start_read_hr", strlen("start_read_hr")); // create py string
 
+	mp_obj_t* args = m_new(mp_obj_t, 2);
+	args[0] = instr;
+	args[1] = wrapApp;
+
+    mp_call_function_n_kw(delegate, 2, 0, args);
+    m_del(args, args, 2); // delete args object
+	
+	register_timer_interrupt(hr_poller, 125);
 }
 void stop_read_hr()
 {
+    mp_obj_t* instr = mp_obj_new_str("stop_read_hr", strlen("stop_read_hr")); // create py string
 
+	mp_obj_t* args = m_new(mp_obj_t, 2);
+	args[0] = instr;
+	args[1] = wrapApp;
+
+    mp_call_function_n_kw(delegate, 2, 0, args);
+    m_del(args, args, 2); // delete args object
 }
 int get_hr_bpm()
 {
-	return 142;
+    mp_obj_t* instr = mp_obj_new_str("get_hr_bpm", strlen("get_hr_bpm")); // create py string
+
+	mp_obj_t* args = m_new(mp_obj_t, 2);
+	args[0] = instr;
+	args[1] = wrapApp;
+
+    mp_obj_t hr_py = mp_call_function_n_kw(delegate, 2, 0, args);
+    m_del(args, args, 2); // delete args object
+	
+	return mp_obj_get_int(hr_py);
 }

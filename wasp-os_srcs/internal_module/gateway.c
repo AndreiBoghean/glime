@@ -68,13 +68,14 @@ mp_obj_t timer_handler(mp_obj_t py_current_delta)
 
 typedef struct {
 	mp_obj_t delegator;
+	mp_obj_t wrapApp;
 	touchCallback* tcb;
 	touchCallback_xy* tcb_xy;
 	timer_callback_registration_t* ticb;
 } setups_t;
 
-STATIC mp_obj_t gateway_handle_main(mp_obj_t delegator) {
-	setups_t setups = {delegator, &tcb, &tcb_xy, ticb_registrations};
+STATIC mp_obj_t gateway_handle_main(mp_obj_t delegator, mp_obj_t wrapApp) {
+	setups_t setups = {delegator, wrapApp, &tcb, &tcb_xy, ticb_registrations};
 	init((void*) &setups);
 	extern_main();
 
@@ -82,7 +83,7 @@ STATIC mp_obj_t gateway_handle_main(mp_obj_t delegator) {
 }
 
 // bind our (1 argument) function name to a new "gateway_XMHlet_obj" python object
-STATIC MP_DEFINE_CONST_FUN_OBJ_1(gateway_mainer_obj, gateway_handle_main);
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(gateway_mainer_obj, gateway_handle_main);
 STATIC MP_DEFINE_CONST_FUN_OBJ_3(touch_handler_obj, touch_handler);
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(timer_handler_obj, timer_handler);
 

@@ -3,6 +3,7 @@
 
 import wasp
 import gateway
+import ppg
 
 import binascii
 
@@ -55,11 +56,31 @@ def delegate(*_args):
         print("registering timer for", current_delta)
         wasp.system.request_tick(current_delta)
 
+    elif operation == "start_read_hr":
+        wp = args[0]
+        wasp.watch.hrs.enable()
+        wp._hrdata = ppg.PPG(wasp.watch.hrs.read_hrs())
+    elif operation == "stop_read_hr":
+        wp = args[0]
+        wp._hrdata = None
+    elif operation == "get_hr_bpm":
+        wp = args[0]
+        if len(wp._hrdata.data) < 240: return 0
+        val = wp._hrdata.get_heart_rate()
+        if val == None: val = 0
+        return int(val)
+    elif operation == "ping_hr_data":
+        wp = args[0]
+        # delegate("show_int", len(wp._hrdata.data)) # uncomment to see progress out of 240 on hr measuring
+        spl = wp._hrdata.preprocess(wasp.watch.hrs.read_hrs())
+
+
 class WrapApp():
     NAME = "Wrap"
 
     def __init__(self):
         self.current_delta = 500
+        self._hrdata = None
 
     def foreground(self):
         self._draw()
@@ -73,7 +94,7 @@ class WrapApp():
 
         # external.exern_main_handler(lambda : draw.string("Hello, world!", 0, 108, width=240) )
         # gateway.handle_main(draw.string)
-        gateway.handle_main(delegate)
+        gateway.handle_main(delegate, self)
 
     
     def touch(self, event):
@@ -97,5 +118,6 @@ class WrapApp():
         gateway.touch_handler({wasp.EventType.UP: 1, wasp.EventType.DOWN: 2, wasp.EventType.LEFT: 3, wasp.EventType.RIGHT: 4}.get(event[0], -1), -1, -1)
 
     def tick(self, ticks):
+        wasp.system.keep_awake()
         print("ticked with delta", wasp.system.tick_period_ms)
         gateway.timer_handler(wasp.system.tick_period_ms)
