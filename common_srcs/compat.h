@@ -8,6 +8,15 @@ void show_int(int i);
 // places a label centrered at x, y.
 void place_label(const char* string, int x, int y);
 
+enum buttonTouchEvent {btn_shortClick, btn_released, btn_pressLost, btn_longPress, btn_longPressRepeat};
+typedef void (*buttonCallback) (enum buttonTouchEvent);
+void place_button(buttonCallback, int x, int y);
+
+void* counter_create(int startVal, int min, int max, int x, int y);
+int counter_get(void* counter);
+void counter_set(void* counter, int newVal);
+void counter_render(void* counter);
+
 void set_colours(uint32_t fg, uint32_t bg);
 // set the foreground and background colours for drawing.
 
@@ -36,3 +45,11 @@ int get_hr_bpm();
 
 typedef void (*timer_interrupt_callback)();
 void register_timer_interrupt(timer_interrupt_callback action, int period_ms);
+
+void* timer_create(timer_interrupt_callback action, int period_ms);
+void timer_setPeriod(void* timer, int newPeriod);
+void timer_start(void*);
+void timer_stop(void*);
+int timer_isRunning(void* timer);
+int timer_secsRemaining(void* timer);
+

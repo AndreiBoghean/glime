@@ -12,12 +12,15 @@
 #include "systemtask/SystemTask.h"
 #include <cstdint>
 #include <cstdlib>
+#include <cstring>
 #include <lvgl/lvgl.h>
 
 #include "displayapp/LittleVgl.h"
 #include "components/motor/MotorController.h"
 
 #include "components/heartrate/HeartRateController.h"
+
+#include "displayapp/widgets/Counter.h"
 
 // note: callback returns a boolean according to whether it actioned on the event or not
 // if it DID action, then we finalise that "event" and move on to detecting the next one.
@@ -82,8 +85,78 @@ void place_label(const char* text, int x, int y)
 {
   auto label = lv_label_create(lv_scr_act(), nullptr); // create a label on the active screen
   lv_label_set_text(label, text);
-  lv_obj_align(label, nullptr, LV_ALIGN_IN_TOP_LEFT, x, y); // position the label
+
+  // lv_obj_align(label, nullptr, LV_ALIGN_IN_TOP_LEFT, x, y); // position the label
+  auto positioner = lv_obj_create(lv_scr_act(), nullptr);
+  lv_obj_set_size(positioner, 0, 0);
+  lv_obj_align(positioner, nullptr, LV_ALIGN_IN_TOP_LEFT, x, y);
+  lv_obj_align(label, positioner, LV_ALIGN_CENTER, 0, 0);
+
   lv_obj_set_style_local_text_color(label, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, fg_colour);
+}
+
+buttonCallback cb;
+static void cb_wrapper(lv_obj_t* obj, lv_event_t event) {
+  if (event == LV_EVENT_SHORT_CLICKED)
+  { cb(buttonTouchEvent::btn_shortClick); }
+  else if (event == LV_EVENT_LONG_PRESSED)
+  { cb(buttonTouchEvent::btn_longPress); }
+  else if (event == LV_EVENT_LONG_PRESSED_REPEAT)
+  { cb(buttonTouchEvent::btn_longPressRepeat); }
+
+  if (obj) return;
+  if (event) return;
+}
+
+void place_button(buttonCallback _cb, int x, int y)
+{
+  cb = _cb;
+
+  auto btn = lv_btn_create(lv_scr_act(), nullptr);
+
+  auto positioner = lv_obj_create(lv_scr_act(), nullptr);
+  lv_obj_set_size(positioner, 0, 0);
+  lv_obj_align(positioner, nullptr, LV_ALIGN_IN_TOP_LEFT, x, y);
+  lv_obj_align(btn, positioner, LV_ALIGN_CENTER, 0, 0);
+
+  // lv_obj_align(btn, nullptr, LV_ALIGN_IN_TOP_LEFT, x, y);
+
+  // lv_obj_set_style_local_color(btn, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, fg_colour); // doesnt work..
+
+  // lv_obj_set_style_local_radius(btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0x7FFF);
+  // lv_obj_set_size(btn, lv_disp_get_hor_res(lv_disp_get_default()), 50); // <-- makes button width of display
+  lv_obj_set_event_cb(btn, cb_wrapper);
+}
+Pinetime::Applications::Widgets::Counter* counter;
+void* counter_create(int startVal, int min, int max, int x, int y)
+{
+  counter = new Pinetime::Applications::Widgets::Counter(min, max, jetbrains_mono_76);
+  counter->Create();
+  counter->SetValue(startVal);
+
+  auto positioner = lv_obj_create(lv_scr_act(), nullptr);
+  lv_obj_set_size(positioner, 0, 0);
+  lv_obj_align(positioner, nullptr, LV_ALIGN_IN_TOP_LEFT, x, y);
+
+  lv_obj_align(counter->GetObject(), positioner, LV_ALIGN_CENTER, 0, 0);
+
+  return counter;
+}
+int counter_get(void* counter)
+{
+  return ((Pinetime::Applications::Widgets::Counter*) counter)->GetValue();
+  // if (counter) return 0;
+  // return 0;
+}
+void counter_set(void* counter, int newVal)
+{
+  ((Pinetime::Applications::Widgets::Counter*) counter)->SetValue(newVal);
+  // if (counter) newVal = 0;
+  // if (newVal) newVal = 0;
+}
+void counter_render(void* counter)
+{
+  if (counter) return;
 }
 
 void set_brightness(brightness_level bl)
@@ -197,4 +270,29 @@ void register_timer_interrupt(timer_interrupt_callback action, int period_ms)
 {
 	// lv_task_create(Pinetime::Applications::Screens::Screen::RefreshTaskCallback, period_ms, LV_TASK_PRIO_MID, NULL);
 	lv_task_create(_RefreshTaskCallback, period_ms, LV_TASK_PRIO_MID, (void*) action);
+}
+
+// void* timer_create(timer_interrupt_callback action, int period_ms);
+void timer_setPeriod(void* timer, int newPeriod)
+{
+  if (timer) newPeriod = 0;
+  if (newPeriod) return;
+}
+void timer_start(void* timer)
+{
+  if (timer) return;
+}
+void timer_stop(void* timer)
+{
+  if (timer) return;
+}
+int timer_isRunning(void* timer)
+{
+  if (timer) return 0;
+  return 0;
+}
+int timer_secsRemaining(void* timer)
+{
+  if (timer) return (12*60)+34;
+  return (12*60)+34;
 }
