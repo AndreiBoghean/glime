@@ -27,14 +27,15 @@ wrapApp::wrapApp(AppControllers& controllers) {
 
 int wrapApp::default_OnTouchEvent(globalTouchEvent event)
 {
-  if (event != SwipeRight) { return 1; }
+  if (event != SwipeRight) { return 0; }
+  return 0;
 
   lv_obj_t* title = lv_label_create(lv_scr_act(), nullptr);
   lv_label_set_text_static(title, "My test application");
   lv_label_set_align(title, LV_LABEL_ALIGN_CENTER);
   lv_obj_align(title, lv_scr_act(), LV_ALIGN_IN_TOP_LEFT, 0, 0);
 
-  return 1;
+  return 0;
 }
 
 int wrapApp::default_OnTouchEvent_xy(uint16_t x, uint16_t y)
@@ -72,7 +73,7 @@ bool wrapApp::OnTouchEvent(Pinetime::Applications::TouchEvents event)
 	  return false;
 	  break;
   }
-  return true;
+  return false;
 }
 
 bool wrapApp::OnTouchEvent(uint16_t x, uint16_t y)
