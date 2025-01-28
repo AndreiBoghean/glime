@@ -1,11 +1,11 @@
 #! /bin/bash
 #! /bin/bash -v
 
-infi_dir="$(pwd)/$(find -name "InfiniTime")"
-infi_libs="$(pwd)/$(find -name "infi_libs" | head -1)" # head -1 needed because of unexplained dir copying wierdness.
+infi_dir="$(pwd)/$(find -name "InfiniTime" | grep "andrei" -v)"
+infi_libs="$(pwd)/$(find -name "infi_libs" | grep "andrei" -v | head -1)" # head -1 needed because of unexplained dir copying wierdness.
 
-echo "$infi_dir"
-echo "$infi_libs"
+echo "infi: $infi_dir"
+echo "libs: $infi_libs"
 
 cd $infi_dir
 

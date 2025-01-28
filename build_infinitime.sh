@@ -1,8 +1,8 @@
 #! /bin/bash
 #! /bin/bash -v
 
-infi_dir="$(pwd)/$(find -name "InfiniTime")"
-infi_libs="$(pwd)/$(find -name "infi_libs" | head -1)" # head -1 needed because of unexplained dir copying wierdness.
+infi_dir="$(pwd)/$(find -name "InfiniTime" | grep "andrei" -v)"
+infi_libs="$(pwd)/$(find -name "infi_libs" | grep "andrei" -v | head -1)" # head -1 needed because of unexplained dir copying wierdness.
 
 echo "$infi_dir"
 echo "$infi_libs"
@@ -27,7 +27,7 @@ sdk="$infi_libs/nRF5_SDK_15.3.0_59ac345/"
 echo "toolchain" "$toolchain"
 echo "sdk" "$sdk"
 
-cmake ../ -DARM_NONE_EABI_TOOLCHAIN_PATH=$toolchain -DNRF5_SDK_PATH=$sdk -DBUILD_DFU=1 -DBUILD_RESOURCES=1 -DENABLE_USERAPPS="Apps::wrapApp, Apps::Paint, Apps::HeartRate"
+cmake ../ -DARM_NONE_EABI_TOOLCHAIN_PATH=$toolchain -DNRF5_SDK_PATH=$sdk -DBUILD_DFU=1 -DBUILD_RESOURCES=1 -DENABLE_USERAPPS="Apps::wrapApp, Apps::Paint, Apps::HeartRate, Apps::Timer"
 echo $(pwd)
 
 make -j4 pinetime-mcuboot-app
