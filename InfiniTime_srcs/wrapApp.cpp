@@ -10,10 +10,11 @@ typedef struct {
 	Pinetime::Applications::AppControllers* controllers;
 	touchCallback* tcb;
 	touchCallback_xy* tcb_xy;
+	lv_task_t** timers_freeable;
 } setups_t;
 
 wrapApp::wrapApp(AppControllers& controllers) {
-  setups_t setups = {&controllers, &tcb, &tcb_xy};
+  setups_t setups = {&controllers, &tcb, &tcb_xy, timers_freeable};
   init((void*) &setups);
   extern_main();
 
@@ -82,5 +83,8 @@ bool wrapApp::OnTouchEvent(uint16_t x, uint16_t y)
 }
 
 wrapApp::~wrapApp() {
+  Screen::~Screen();
   lv_obj_clean(lv_scr_act());
+  lv_task_del(timers_freeable[0]); // TODO: iterate over timers. maybe linked list, maybe array.
+  // destruct();
 }

@@ -51,5 +51,6 @@ void timer_setPeriod(void* timer, int newPeriod);
 void timer_start(void*);
 void timer_stop(void*);
 int timer_isRunning(void* timer);
-int timer_secsRemaining(void* timer);
+int timer_msRemaining(void* timer);
 
+// void destruct();

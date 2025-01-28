@@ -60,10 +60,10 @@ void* minCounter;
 void* secCounter;
 int extern_main() {
   set_colours(0xff00ff, 0x000000); // TODO: you've still not fixed the default-text-colour-is-black issue smh
-  // place_label(":", 120, 120);
+  place_label(":", 120, 120);
 
-  minCounter = counter_create(42, 0, 59, 120-60, 110);
-  secCounter = counter_create(42, 0, 59, 120+60, 110);
+  minCounter = counter_create(0, 0, 59, 120-60, 110);
+  secCounter = counter_create(10, 0, 59, 120+60, 110);
   counter_render(minCounter);
   counter_render(secCounter);
 
@@ -73,16 +73,12 @@ int extern_main() {
   // place text of play/pause button
   place_label("start", 120, 220);
 
-  return 0;
-
-  if (timerObj == nullptr) {
-    timerObj = timer_create(Reset, 0);
-  }
+  timerObj = timer_create(Reset, 0);
 
   // ok here is first hurdle.
   // we do not want to be given data from mr abstraction.
   // what if we check that the timer object is enabled?
-  if (timer_isRunning(timerObj)) SetTimerRunning(); // TODO: implement in compat
+  if (timer_isRunning(timerObj)) SetTimerRunning();// TODO: implement in compat
   else SetTimerStopped();
   // if (timer.IsRunning()) {
   //   SetTimerRunning();
@@ -90,12 +86,14 @@ int extern_main() {
   //   SetTimerStopped();
   // }
 
-  register_timer_interrupt(Refresh, 30); // display refreshes every 30 seconds.
+  register_timer_interrupt(Refresh, 30); // display refreshes every 30ms.
   // taskRefresh = lv_task_create(RefreshTaskCallback, LV_DISP_DEF_REFR_PERIOD, LV_TASK_PRIO_MID, this);
+
+  return 0;
 }
 
 void MaskReset() {
-  if (!timer_isRunning(timerObj)) place_label("start", 60, 180);
+  if (!timer_isRunning(timerObj)) place_label("startM", 120, 210);
 
   // A click event is processed before a release event,
   // so the release event would override the "Pause" text without this check
@@ -105,20 +103,20 @@ void MaskReset() {
 }
 
 void Refresh() {
-  if (true || timer_isRunning(timerObj)) DisplayTime(); // TODO: implement in compat
+  if (timer_isRunning(timerObj)) DisplayTime(); // TODO: implement in compat
   // this code is used for the reset function, which we're ignoring for now. TODO: leave space for future extension to serve long press events on button handlers
   // else if (buttonPressing && get_current_system_tick() > pressTime + ms_to_sysTicks(150)) // if the button has been pressed long enough...
   //  reset();
 }
 
 void DisplayTime() {
-  int displaySeconds = timer_secsRemaining(timerObj); // TOCO: implement in compat
+  int displaySeconds = timer_msRemaining(timerObj) / 1000; // TOCO: implement in compat
   counter_set(minCounter, displaySeconds / 60);
   counter_set(secCounter, displaySeconds % 60);
 }
 
 void SetTimerRunning() {
-  place_label("Pause", 60, 180);
+  place_label("Pause", 120, 220);
 
   // minuteCounter.HideControls();
   // secondCounter.HideControls();
@@ -126,7 +124,7 @@ void SetTimerRunning() {
 }
 
 void SetTimerStopped() {
-  place_label("Start", 60, 180);
+  place_label("Start", 120, 220);
 
 
   // minuteCounter.ShowControls();
@@ -138,11 +136,13 @@ void ToggleRunning() {
   int secVal = counter_get(secCounter);
   int minVal = counter_get(minCounter);
   if (timer_isRunning(timerObj)) {
+	  place_label("running", 120, 70);
 	  DisplayTime();
 	  timer_stop(timerObj);
 	  SetTimerStopped();
   }
   else if (secVal + minVal > 0) {
+	  place_label("walking", 120, 120);
 	  timer_setPeriod(timerObj, (minVal*60 + secVal) * 1000); // in miliseconds
 	  timer_start(timerObj);
 	  Refresh();

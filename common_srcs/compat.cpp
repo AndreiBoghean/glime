@@ -22,6 +22,10 @@
 
 #include "displayapp/widgets/Counter.h"
 
+#include <chrono>
+#include <timers.h>
+#include <FreeRTOS.h>
+
 // note: callback returns a boolean according to whether it actioned on the event or not
 // if it DID action, then we finalise that "event" and move on to detecting the next one.
 // i.e. we use the return to decide whether to call lvgl.CancelTap();
@@ -32,10 +36,12 @@ typedef struct {
 	Pinetime::Applications::AppControllers* controllers;
 	touchCallback* tcb;
 	touchCallback_xy* tcb_xy;
+	lv_task_t** timers_freeable;
 } setups_t;
 
 touchCallback* tcb; 
 touchCallback_xy* tcb_xy;
+lv_task_t** timers_freeable;
 // ^ pointers to a pointer to a function.hid
 // we ALWAYS tell InfiniTime to use these pointer when handling events,
 // but we have a dummy handler initially which gets swapped out whenever we actually
@@ -50,6 +56,7 @@ void init(void* _s)
 	controllers = s->controllers;
 	tcb = (s->tcb);
 	tcb_xy = (s->tcb_xy);
+	timers_freeable = (s->timers_freeable);
 	return;
 }
 
@@ -269,30 +276,48 @@ void _RefreshTaskCallback(lv_task_t* task) {
 void register_timer_interrupt(timer_interrupt_callback action, int period_ms)
 {
 	// lv_task_create(Pinetime::Applications::Screens::Screen::RefreshTaskCallback, period_ms, LV_TASK_PRIO_MID, NULL);
-	lv_task_create(_RefreshTaskCallback, period_ms, LV_TASK_PRIO_MID, (void*) action);
+	timers_freeable[0] = lv_task_create(_RefreshTaskCallback, period_ms, LV_TASK_PRIO_MID, (void*) action);
+	// ^ pass the new timer up to wrapApp.cpp in order for it to be properly freed in the destructor.
 }
 
-// void* timer_create(timer_interrupt_callback action, int period_ms);
+// note that Timerhandle_t is actually just an alias for void *
+void* timer_create(timer_interrupt_callback action, int period_ms)
+{
+  // we need an ID because timers transcend apps, and if teh timer app gets called twice then we need to give it back the timer it already created.
+  return controllers->compatProvider.timer_getMake(0, action, period_ms);
+}
 void timer_setPeriod(void* timer, int newPeriod)
 {
-  if (timer) newPeriod = 0;
-  if (newPeriod) return;
+  xTimerChangePeriod(timer, pdMS_TO_TICKS(newPeriod), 0);
 }
 void timer_start(void* timer)
 {
-  if (timer) return;
+  xTimerStart(timer, 0);
 }
 void timer_stop(void* timer)
 {
-  if (timer) return;
+  xTimerStop(timer, 0);
 }
 int timer_isRunning(void* timer)
 {
-  if (timer) return 0;
-  return 0;
+  return xTimerIsTimerActive(timer) == pdTRUE;
 }
-int timer_secsRemaining(void* timer)
+int timer_msRemaining(void* timer)
 {
-  if (timer) return (12*60)+34;
-  return (12*60)+34;
+  // if (timer) return (12*60)+34;
+  // return (12*60)+34;
+
+  std::chrono::milliseconds remainingTime = std::chrono::milliseconds(0);
+
+  if (timer_isRunning(timer)) {
+    TickType_t remainingTicks = xTimerGetExpiryTime(timer) - xTaskGetTickCount();
+    remainingTime = std::chrono::milliseconds(remainingTicks * 1000 / configTICK_RATE_HZ);
+  }
+
+  // return std::chrono::duration_cast<std::chrono::seconds>(remainingTime).Get().count();
+  return remainingTime.count();
 }
+
+// void destruct() {
+// 	lv_task_del(timer);
+// }
