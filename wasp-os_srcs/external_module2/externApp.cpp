@@ -1,1 +1,0 @@
-../../common_srcs/externApp.cpp
