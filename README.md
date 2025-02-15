@@ -21,11 +21,11 @@ if you wish to test multiple operating systems, only then should you pre-emptive
 -->
 
 ##### usage
-your entire application will be situated within glime/externApp.cpp  
+**your entire application will be situated within `glime/externApp.cpp`**  
 the glime compatability library pre-configures an application in the host operating system, which wraps arround the application you write
 within extern_main(), and executes it when the watch user launches the wrapper app.
 
-within this environment, you are limited to using the functions provided in compat.h, however the compatability library requires these functions
+**you are limited to using the functions provided in `compat.h`**, however the compatability library requires these functions
 are implemented in every supporting operating system, ensuring your application's cross-compatability.
 </details>
 
