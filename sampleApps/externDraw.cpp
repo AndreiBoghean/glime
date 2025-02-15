@@ -15,13 +15,10 @@ int colI = 10000; // start with a large number so the user cant immediately swip
 int size = 10;
 int OnTouchEvent_xy(uint16_t x, uint16_t y)
 {
-  // clear_screen(); // prepare for drawing the next screen state.
-
   uint32_t colours[] = {0xFF0000, 0xFF00FF, 0xFFFF00, 0x00FFFF, 0x0000FF};
 
   set_colours(colours[colI % 5], 0x0);
   draw_rect(x, y, x+size, y+size);
-  // SetColors();
   return 1;
 }
 

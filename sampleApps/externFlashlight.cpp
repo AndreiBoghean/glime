@@ -1,15 +1,6 @@
 #include "compat.h"
 
 /*
-int extern_main()
-{
-	show_int(6);
-
-	return 0;
-}
-//*/
-
-/*
  * labels, arbitrarily positioned and rotated, with arbitrary SVG displaying. (rip lol)
  * concern: displaying icons may be hard; restrict to text only, with images as a stretch goal?
  * ^ I say this because image support may need to be independnetly implemented, via some tool that converts an image to the respective format for an OS.
@@ -62,8 +53,6 @@ int extern_main()
   SetColors();
   SetIndicators();
 
-  // systemTask.PushMessage(Pinetime::System::Messages::DisableSleeping);
-  // disable_sleep();
   register_global_eventListener(OnTouchEvent);
   return 0;
 }
@@ -109,7 +98,7 @@ int OnTouchEvent(enum globalTouchEvent event)
 	  set_brightness(brightnessLevel); // set brightness using brightness controller
 	}
 	SetIndicators(); // update indicators
-					 //
+
     return 1;
   }
   else if (event == SwipeRight) {
@@ -122,7 +111,7 @@ int OnTouchEvent(enum globalTouchEvent event)
 	  set_brightness(brightnessLevel); // set brightness using brightness controller
 	}
 	SetIndicators(); // update indicators
-					 //
+
     return 1;
   }
 

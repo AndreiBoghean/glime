@@ -19,7 +19,6 @@ int extern_main()
 {
   set_colours(0xFF0000, 0x000000);
   clear_screen();
-  // TODO: CHANGE THE DEFAULT FG COLOUR SO IT'S NOT BLACK
   
   place_label("bpm ___?", 60, 120);
   start_read_hr();
