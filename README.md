@@ -12,7 +12,7 @@ modified wasp-os: https://github.com/AndreiBoghean/wasp-os
 setup should be as simple as cloning the respective OS which you wish to run your app on,  
 and following the repository's instructions for dependencies, building, and optionally installing glime support if it's not enabled by default.
 
-if you wish to test multiple operating systems, only then should you pre-emptively clone glime and then follow the OS's instructions for using an _existing_ glime download.
+for most people, **you should not clone glime directly unless you wish to swap between multiple operating systems**, only then should you pre-emptively clone glime and then follow the OS's instructions for using an _existing_ glime download.
 
 <!--
 1. clone this repo
