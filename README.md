@@ -24,6 +24,7 @@ for most people, **you should not clone glime directly unless you wish to swap b
 **your entire application will be situated within `glime/externApp.cpp`**  
 the glime compatability library pre-configures an application in the host operating system, which wraps arround the application you write
 within extern_main(), and executes it when the watch user launches the wrapper app.
+**note:** the main entry point for your application is demonstrated in `glime/externApp.h`
 
 **you are limited to using the functions provided in `compat.h`**, however the compatability library requires these functions
 are implemented in every supporting operating system, ensuring your application's cross-compatability.
